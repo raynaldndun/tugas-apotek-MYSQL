@@ -186,3 +186,134 @@ ALTER TABLE `purchase_detail`
 -- 9.  `suppliers`
 ALTER TABLE `suppliers`
     MODIFY COLUMN `supplier_id` INT(11) NOT NULL AUTO_INCREMENT;
+
+
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`role_id`),
+  ADD UNIQUE KEY `role_name` (`role_name`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD KEY `fk_user_role` (`role_id`);
+
+--
+-- Indexes for table `diseases`
+--
+ALTER TABLE `diseases`
+  ADD PRIMARY KEY (`disease_id`),
+  ADD KEY `fk_diseases_created_by` (`created_by`),
+  ADD KEY `fk_diseases_updated_by` (`updated_by`);
+
+--
+-- Indexes for table `drugs`
+--
+ALTER TABLE `drugs`
+  ADD PRIMARY KEY (`drug_id`),
+  ADD KEY `fk_drug_type` (`type_id`),
+  ADD KEY `fk_drugs_created_by` (`created_by`),
+  ADD KEY `fk_drugs_updated_by` (`updated_by`);
+
+--
+-- Indexes for table `drug_disease`
+--
+ALTER TABLE `drug_disease`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `fk_drug_id_disease` (`drug_id`),
+  ADD KEY `fk_disease_id` (`disease_id`),
+  ADD KEY `fk_drug_disease_created_by` (`created_by`),
+  ADD KEY `fk_drug_disease_updated_by` (`updated_by`);
+
+--
+-- Indexes for table `drug_type`
+--
+ALTER TABLE `drug_type`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `type_name` (`type_name`),
+  ADD KEY `fk_drug_type_created_by` (`created_by`),
+  ADD KEY `fk_drug_type_updated_by` (`updated_by`);
+
+--
+-- Indexes for table `purchases`
+--
+ALTER TABLE `purchases`
+  ADD PRIMARY KEY (`purchase_id`),
+  ADD KEY `fk_supplier_id` (`supplier_id`),
+  ADD KEY `fk_purchases_created_by` (`created_by`),
+  ADD KEY `fk_purchases_updated_by` (`updated_by`);
+
+--
+-- Indexes for table `purchase_detail`
+--
+ALTER TABLE `purchase_detail`
+  ADD PRIMARY KEY (`detail_id`),
+  ADD KEY `fk_purchase_id` (`purchase_id`),
+  ADD KEY `fk_drug_id` (`drug_id`),
+  ADD KEY `fk_purchase_detail_created_by` (`created_by`),
+  ADD KEY `fk_purchase_detail_updated_by` (`updated_by`);
+
+--
+-- Indexes for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  ADD PRIMARY KEY (`supplier_id`),
+  ADD KEY `fk_suppliers_created_by` (`created_by`),
+  ADD KEY `fk_suppliers_updated_by` (`updated_by`);
+
+
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_user_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`);
+
+--
+-- Constraints for all tables (Menghubungkan created_by/updated_by ke users.user_id)
+--
+ALTER TABLE `diseases`
+  ADD CONSTRAINT `fk_diseases_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_diseases_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `drugs`
+  ADD CONSTRAINT `fk_drug_type` FOREIGN KEY (`type_id`) REFERENCES `drug_type` (`id`),
+  ADD CONSTRAINT `fk_drugs_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_drugs_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `drug_disease`
+  ADD CONSTRAINT `fk_disease_id` FOREIGN KEY (`disease_id`) REFERENCES `diseases` (`disease_id`),
+  ADD CONSTRAINT `fk_drug_id_disease` FOREIGN KEY (`drug_id`) REFERENCES `drugs` (`drug_id`),
+  ADD CONSTRAINT `fk_drug_disease_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_drug_disease_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `drug_type`
+  ADD CONSTRAINT `fk_drug_type_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_drug_type_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `purchases`
+  ADD CONSTRAINT `fk_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`supplier_id`),
+  ADD CONSTRAINT `fk_purchases_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_purchases_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `purchase_detail`
+  ADD CONSTRAINT `fk_drug_id` FOREIGN KEY (`drug_id`) REFERENCES `drugs` (`drug_id`),
+  ADD CONSTRAINT `fk_purchase_id` FOREIGN KEY (`purchase_id`) REFERENCES `purchases` (`purchase_id`),
+  ADD CONSTRAINT `fk_purchase_detail_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_purchase_detail_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `suppliers`
+  ADD CONSTRAINT `fk_suppliers_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `fk_suppliers_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`);
+
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
